@@ -1,156 +1,163 @@
-# Next.js Clean Architecture
+# Blog Application (Next.js + Clean Architecture)
 
-A production-ready Next.js 16.1.6 and react js 19.2.3 project implementing clean architecture principles.
+This project is a full-stack blog/admin app built with Next.js App Router, React Query, MongoDB, and a modular clean-architecture style.  
+It includes authentication, posts with comments, and CRUD flows for categories and products.
 
-This architecture ensures:
-- **Clear separation of concerns** - Each layer has a specific responsibility
-- **Testability** - Business logic is isolated from HTTP handlers
-- **Maintainability** - Consistent structure across modules
-- **Scalability** - Easy to add new features and modules
-- **Type Safety** - Full TypeScript support with strict mode
+## Tech Stack
 
-## 🎯 Quick Start
+- Next.js `16.1.6` and React `19.2.3`
+- TypeScript and ESLint
+- MongoDB with Mongoose
+- React Query for client-side data fetching/caching
+- JWT-based auth
+- Optional file storage integration via DigitalOcean Spaces (S3-compatible)
 
-### 1. Installation
+## Features
+
+- Auth: register, login, and current-user (`/api/v1/auth/me`)
+- Protected dashboard layout with sidebar navigation
+- Posts listing with infinite scroll
+- Create post flow (admin UI) with tags and optional image upload
+- Post details page with comments and comment count
+- Categories CRUD
+- Products CRUD (linked to categories)
+- Health check endpoint for service readiness
+
+## Quick Start
+
+### 1) Install dependencies
 
 ```bash
-# Install dependencies
 npm install
-
-# Copy environment file
-cp .env.example .env.local
 ```
 
-### 2. Configuration
+### 2) Create environment file
 
-Update `.env.local`:
+Create `.env.local` in the project root:
+
 ```env
+# App
+NODE_ENV=development
+PORT=3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Database
 DATABASE_URL=mongodb://localhost:27017/cleanarch
-JWT_SECRET=your-secret-key
+DB_NAME=cleanarch
+
+# Auth
+JWT_SECRET=change-this-in-production
+JWT_EXPIRY=15m
+
+# Optional logging/cors/api defaults
+LOG_LEVEL=info
+LOG_FORMAT=json
+CORS_ORIGIN=*
+API_VERSION=v1
+API_PREFIX=/api
+
+# Uploads
+UPLOAD_DIR=public/upload
+
+# Optional DigitalOcean Spaces (S3-compatible)
+DO_SPACES_NAME=
+DO_SECRET_KEY=
+DO_ACCESS_KEY=
+DO_REGION=
+DO_ENDPOINT=
+DO_PROTOCOL=https
 ```
 
-### 3. Run Development Server
+### 3) Run the app
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
-## 📁 Project Structure
-
-```
-src/
-├── app/                      # Next.js App Router
-│   ├── api/v1/              # API routes (versioned)
-│   │   ├── auth/            # Authentication endpoints
-│   │   │   ├── login/route.ts
-│   │   │   ├── register/route.ts
-│   │   │   └── me/route.ts
-│   │   └── health/route.ts   # Health check
-│   ├── (protected)/         # Protected pages group
-│   │   └── dashboard/       # Dashboard page
-│   ├── (public)/            # Public pages group
-│   │   └── page.tsx
-│   ├── layout.tsx           # Root layout
-│   └── globals.css          # Global styles
-│
-├── modules/                 # Business logic (organized by feature)
-│   ├── auth/               # Authentication module
-│   │   ├── auth.controller.ts    # HTTP request handling
-│   │   ├── auth.service.ts       # Business logic
-│   │   ├── auth.repository.ts    # Database operations
-│   │   ├── auth.model.ts         # Schema definitions
-│   │   ├── auth.validator.ts     # Input validation
-│   │   ├── auth.types.ts         # TypeScript interfaces
-│   │   └── index.ts              # Barrel export
-│   └── product/            # Product management (placeholder)
-│       └── index.ts
-│
-├── configs/                # Configuration management
-│   ├── env.ts             # Environment variables
-│   ├── db.ts              # Database config
-│   ├── swagger.ts         # API documentation config
-│   └── index.ts           # Barrel export
-│
-├── loaders/               # Application initialization
-│   ├── db.loader.ts       # Database connection loader
-│   ├── app.loader.ts      # App initialization
-│   └── index.ts           # Barrel export
-│
-├── middlewares/           # HTTP middlewares
-│   ├── auth.middleware.ts       # Authentication checks
-│   ├── error.middleware.ts      # Error handling
-│   ├── logger.middleware.ts     # Request logging
-│   └── index.ts                 # Barrel export
-│
-├── integrations/          # External services
-│   ├── redis/             # Cache integration
-│   ├── email/             # Email service
-│   ├── payment/           # Payment gateway (Stripe)
-│   └── index.ts           # Barrel export
-│
-├── jobs/                  # Background tasks
-│   └── cron.jobs.ts       # Scheduled jobs
-│
-├── workers/               # Queue workers
-│   └── queue.worker.ts    # Job queue processor
-│
-├── utils/                 # Utility functions
-│   ├── apiResponse.ts     # Standardized API responses
-│   ├── apiError.ts        # Error handling utility
-│   ├── constants.ts       # Constants
-│   ├── localization.ts    # i18n utility
-│   ├── validations.ts     # Validation helpers
-│   └── index.ts           # Barrel export
-│
-├── lib/                   # Core libraries
-│   ├── db.ts             # Database connection handler
-│   ├── di.ts             # Dependency Injection container
-│   ├── logger.ts         # Logging utility
-│   └── index.ts          # Barrel export
-│
-└── types/                 # Global TypeScript definitions
-    └── global.types.ts    # Shared interfaces
-```
-
-## 🚀 API Endpoints
-
-### Authentication
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---|
-| POST | `/api/v1/auth/login` | User login | ❌ |
-| POST | `/api/v1/auth/register` | User registration | ❌ |
-| GET | `/api/v1/auth/me` | Get current user | ✅ |
-| GET | `/api/v1/health` | Health check | ❌ |
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Create `.env.local` with required variables:
-
-```env
-NODE_ENV=development
-PORT=3000
-DATABASE_URL=mongodb://localhost:27017/cleanarch
-JWT_SECRET=your-secret-key
-```
-
-## 🛠️ Development
-
-### Available Scripts
+## Scripts
 
 ```bash
-npm run dev      # Development server
-npm run build    # Build for production
-npm start        # Start production server
-npm run lint     # Lint code
+npm run dev            # Start development server (Turbo)
+npm run build          # Build for production
+npm run start          # Start production build
+npm run lint           # Run ESLint
+npm run test           # Run Jest tests
+npm run test:coverage  # Run Jest with coverage
+npm run sonar          # Run Sonar scanner
 ```
 
-### TypeScript Configuration
+## API Routes
 
-Absolute imports are configured to use `@/` alias:
+### Health
 
+- `GET /api/v1/health`
 
+### Auth
+
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `GET /api/v1/auth/me`
+
+### Posts & Comments
+
+- `GET /api/v1/post`
+- `POST /api/v1/post`
+- `GET /api/v1/post/:id`
+- `GET /api/v1/post/:id/comments`
+- `GET /api/v1/post/:id/comments/counts`
+- `GET /api/v1/comment`
+- `POST /api/v1/comment`
+
+### Categories
+
+- `GET /api/v1/categories`
+- `POST /api/v1/categories`
+- `GET /api/v1/categories/:id`
+- `PUT /api/v1/categories/:id`
+- `DELETE /api/v1/categories/:id`
+
+### Products
+
+- `GET /api/v1/products`
+- `POST /api/v1/products`
+- `GET /api/v1/products/:id`
+- `PUT /api/v1/products/:id`
+- `DELETE /api/v1/products/:id`
+
+## App Pages
+
+- Public routes:
+  - `/` (redirects to login/dashboard depending on token)
+  - `/login`
+  - `/register`
+- Protected routes:
+  - `/dashboard`
+  - `/posts`
+  - `/posts/[postId]`
+  - `/posts/serverposts`
+  - `/categories`
+  - `/products`
+
+## Project Structure (high level)
+
+```text
+src/
+  app/              # App Router pages + API route handlers
+  modules/          # Feature modules (auth/post/comment/category/product)
+  hooks/            # React Query hooks
+  components/       # UI + feature components
+  configs/          # env/db/swagger config
+  loaders/          # app/db bootstrap loaders
+  middlewares/      # auth/error/logger middleware utilities
+  integrations/     # storage/email/payment/redis integrations
+  jobs/ workers/    # background jobs and worker entry points
+  utils/ lib/       # shared utilities and infrastructure helpers
+```
+
+## Notes
+
+- The project uses `@/` path alias for imports.
+- Authentication token is currently stored client-side and sent as `Authorization: Bearer <token>`.
+- In production, ensure strong values for `JWT_SECRET` and secure environment handling.
